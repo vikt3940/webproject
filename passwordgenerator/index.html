@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Password Generator</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<html>
+<header>
+</header>
+  <div class="container">
+      <h1>Password Generator & Save to Device</h1>
+
+<form autocomplete="off">
+  <p class="name">
+    <input name="username" type="text" class="feedback-input" onkeypress="genrateString();" placeholder="Username" id="username" />
+  </p>
+  <p class="email">
+    <input name="randomstring" type="text" class="feedback-input" id="randomstring" placeholder="Random String" />
+  </p>
+
+  <p class="text">
+    <textarea name="text" class="feedback-input" id="comment" placeholder="Comment"></textarea>
+  </p>
+  <!-- <div class="submit" onclick="generate()">
+    <input value="DOWNLOAD" id="button-blue" />
+  </div> -->
+  <button class="submit" id=button-blue onclick="generate()">DOWNLOAD</button>
+</form>
+  </div>
+</html>
+<!-- partial -->
+  
+</body>
+<script>
+  
+  function randomPassword(length,callback) {
+    var chars = "abcdefghijklmnopqrstuvwxyz!@#$%^&*ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
+    var smallchars = "abcdefghijklmnopqrstuvwxyz";
+    var specialchar = "!@#$%^&*";
+    var capitalchars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var number = "1234567890";
+    var smallcount =0;
+    var capitalcount = 0;
+    var numbercount = 0;
+    var specialcount = 0;
+    var pass = "";
+    for (var x = 0; x < length; x++) {
+        var i = Math.floor(Math.random() * chars.length);
+        pass += chars.charAt(i);
+        if(smallchars.indexOf(chars.charAt(i))>=0){
+          smallcount++;
+        }else if(capitalchars.indexOf(chars.charAt(i))>=0){
+          capitalcount++;
+        }else if(number.indexOf(chars.charAt(i))>=0){
+          numbercount++;
+        }else{
+          specialcount++;
+        }
+    }
+    if(smallcount==0 || capitalcount==0|| numbercount==0 || specialcount == 0){
+      callback("");
+    }else{
+      callback(pass);
+    }
+}
+  async function genrateString(){
+    await randomPassword(10,function(data){
+      if(data != "" && data!= undefined){
+        document.getElementById("randomstring").value = data;      
+      }else{
+        genrateString();
+      }
+    });
+  }
+
+  function generate() {
+    var username = document.getElementById("username").value.trim();
+      // var randomString = randomPassword(10);
+      if(username != ""){
+        var text = username + ":"+document.getElementById("randomstring").value.trim()+"\nComment:"+document.getElementById("comment").value.trim();
+        download(username.replace(/ /g,""),text);
+        window.reload();
+      }else{
+        alert("Please Enter Username");
+      }
+  }
+
+
+  function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+</script>
+</html>
